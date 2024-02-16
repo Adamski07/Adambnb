@@ -39,6 +39,7 @@ namespace Adambnb.Models
         public List<Image> Images { get; set; }
         public float PricePerDay { get; set; }
         public List<Reservation> Reservations { get; set; }
+        public int LandLordId { get; set; } 
         public LandLord LandLord { get; set; }
 
     }

@@ -1,4 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Adambnb.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<AdambnbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AdambnbContext") ?? throw new InvalidOperationException("Connection string 'AdambnbContext' not found.")));
 
 // Add services to the container.
 
