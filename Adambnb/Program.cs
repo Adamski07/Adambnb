@@ -7,6 +7,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+               builder =>
+               {
+                   builder.WithOrigins("https://cloudbnb-df3c1.web.app")
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+               });
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -15,6 +27,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
 
