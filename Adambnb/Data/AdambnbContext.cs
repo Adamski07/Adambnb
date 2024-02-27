@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Adambnb.Models;
+using Adambnb.Seeders;
 
 namespace Adambnb.Data
 {
@@ -46,7 +47,9 @@ namespace Adambnb.Data
                 .WithOne(i => i.LandLord)
                 .HasForeignKey<Image>(i => i.LandLordId)
                 .OnDelete(DeleteBehavior.Cascade);
-        }
 
+            modelBuilder.SeedData();
+        }
     }
 }
+

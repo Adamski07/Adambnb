@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adambnb.Migrations
 {
     [DbContext(typeof(AdambnbContext))]
-    [Migration("20240216125058_relations")]
-    partial class relations
+    [Migration("20240227090250_seeding")]
+    partial class seeding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,22 @@ namespace Adambnb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Costumers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "john@example.com",
+                            FirstName = "John",
+                            LastName = "Doe"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "jane@example.com",
+                            FirstName = "Jane",
+                            LastName = "Smith"
+                        });
                 });
 
             modelBuilder.Entity("Adambnb.Models.Image", b =>
@@ -79,6 +95,24 @@ namespace Adambnb.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("Images");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsCover = true,
+                            LandLordId = 1,
+                            LocationId = 1,
+                            Url = "image1.jpg"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsCover = true,
+                            LandLordId = 2,
+                            LocationId = 2,
+                            Url = "image2.jpg"
+                        });
                 });
 
             modelBuilder.Entity("Adambnb.Models.LandLord", b =>
@@ -103,6 +137,22 @@ namespace Adambnb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LandLords");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Age = 35,
+                            FirstName = "Landlord1",
+                            LastName = "Doe"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Age = 40,
+                            FirstName = "Landlord2",
+                            LastName = "Smith"
+                        });
                 });
 
             modelBuilder.Entity("Adambnb.Models.Location", b =>
@@ -149,6 +199,34 @@ namespace Adambnb.Migrations
                     b.HasIndex("LandLordId");
 
                     b.ToTable("Locations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Description1",
+                            FeaturesList = "[2,3]",
+                            LandLordId = 1,
+                            NumberOfGuests = 4,
+                            PricePerDay = 100f,
+                            Rooms = 2,
+                            Subtitle = "Subtitle1",
+                            Title = "Location1",
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Description2",
+                            FeaturesList = "[0,1]",
+                            LandLordId = 2,
+                            NumberOfGuests = 6,
+                            PricePerDay = 150f,
+                            Rooms = 3,
+                            Subtitle = "Subtitle2",
+                            Title = "Location2",
+                            Type = 5
+                        });
                 });
 
             modelBuilder.Entity("Adambnb.Models.Reservation", b =>
@@ -181,6 +259,26 @@ namespace Adambnb.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("Reservations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CostumerId = 1,
+                            Discount = 10f,
+                            EndDate = new DateTime(2024, 3, 1, 10, 2, 49, 651, DateTimeKind.Local).AddTicks(582),
+                            LocationId = 1,
+                            StartDate = new DateTime(2024, 2, 27, 10, 2, 49, 651, DateTimeKind.Local).AddTicks(509)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CostumerId = 2,
+                            Discount = 5f,
+                            EndDate = new DateTime(2024, 3, 3, 10, 2, 49, 651, DateTimeKind.Local).AddTicks(591),
+                            LocationId = 2,
+                            StartDate = new DateTime(2024, 2, 27, 10, 2, 49, 651, DateTimeKind.Local).AddTicks(589)
+                        });
                 });
 
             modelBuilder.Entity("Adambnb.Models.Image", b =>

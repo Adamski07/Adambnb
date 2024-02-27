@@ -28,13 +28,10 @@ namespace Adambnb.Models
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string Description { get; set; }
-
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public LocationType Type { get; set; }
         public int Rooms { get; set; }
         public int NumberOfGuests { get; set; }
 
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public List<Features> FeaturesList{ get; set; }
         public List<Image> Images { get; set; }
         public float PricePerDay { get; set; }

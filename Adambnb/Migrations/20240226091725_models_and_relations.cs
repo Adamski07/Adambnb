@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Adambnb.Migrations
 {
     /// <inheritdoc />
-    public partial class relations : Migration
+    public partial class models_and_relations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

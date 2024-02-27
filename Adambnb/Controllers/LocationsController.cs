@@ -104,5 +104,18 @@ namespace Adambnb.Controllers
         {
             return _context.Locations.Any(e => e.Id == id);
         }
+
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<IEnumerable<Location>>> GetAll()
+        {
+            var locations = await _context.Locations.ToListAsync();
+
+            if (locations == null || !locations.Any())
+            {
+                return NotFound("No locations found.");
+            }
+
+            return Ok(locations);
+        }
     }
 }
