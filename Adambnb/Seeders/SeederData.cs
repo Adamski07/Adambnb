@@ -33,9 +33,9 @@ namespace Adambnb.Seeders
                 new Location
                 {
                     Id = 1,
-                    Title = "Location1",
-                    Subtitle = "Subtitle1",
-                    Description = "Description1",
+                    Title = "De Boerenhoeve",
+                    Subtitle = "Lekker veel ruimte",
+                    Description = "De camping ligt verscholen achter de boerderij in de polder. Geniet van de rust en ruimte op De Boerenhoeve, waar de natuur je omringt en de frisse lucht je verwelkomt. Onze comfortabele appartementen bieden een thuis weg van huis, met moderne voorzieningen en een sfeervolle inrichting. Ontspan op het terras en bewonder het prachtige uitzicht op de omringende weilanden. Of verken de nabijgelegen wandel- en fietspaden voor een onvergetelijke ervaring in de natuur. We heten je van harte welkom op De Boerenhoeve!",
                     Type = Location.LocationType.Apartment,
                     Rooms = 2,
                     NumberOfGuests = 4,
@@ -46,15 +46,41 @@ namespace Adambnb.Seeders
                 new Location
                 {
                     Id = 2,
-                    Title = "Location2",
-                    Subtitle = "Subtitle2",
-                    Description = "Description2",
-                    Type = Location.LocationType.House,
+                    Title = "Zeezicht Appartement",
+                    Subtitle = "Prachtig uitzicht op de zee",
+                    Description = "Ervaar de ultieme vakantie aan de kust in ons Zeezicht Appartement. Geniet van adembenemende uitzichten op de zee vanuit je ruime en comfortabele accommodatie. Ontspan op het balkon en luister naar het rustgevende geluid van de golven. Het appartement is smaakvol ingericht en voorzien van moderne voorzieningen. Verken de nabijgelegen stranden, restaurants en bezienswaardigheden voor een onvergetelijke vakantie aan zee.",
+                    Type = Location.LocationType.Apartment,
                     Rooms = 3,
                     NumberOfGuests = 6,
-                    FeaturesList = new List<Location.Features> { Location.Features.Smoking, Location.Features.PetsAllowed },
+                    FeaturesList = new List<Location.Features> { Location.Features.Wifi, Location.Features.Tv, Location.Features.Bath },
                     PricePerDay = 150.0f,
                     LandLordId = 2
+                },
+                new Location
+                {
+                    Id = 3,
+                    Title = "Groene Oase Chalet",
+                    Subtitle = "Omgeven door natuur",
+                    Description = "Ontsnap aan de drukte en omarm de natuur in ons Groene Oase Chalet. Dit charmante chalet is omgeven door weelderig groen en biedt een rustige toevluchtsoord voor natuurliefhebbers. Het chalet is voorzien van alle gemakken en beschikt over een eigen tuin waar je kunt genieten van de flora en fauna. Verken de wandelpaden, observeer vogels en kom helemaal tot rust in deze groene oase.",
+                    Type = Location.LocationType.Chalet,
+                    Rooms = 1,
+                    NumberOfGuests = 2,
+                    FeaturesList = new List<Location.Features> { Location.Features.PetsAllowed, Location.Features.Breakfast },
+                    PricePerDay = 120.0f,
+                    LandLordId = 1
+                },
+                new Location
+                {
+                    Id = 4,
+                    Title = "Historisch Stadsappartement",
+                    Subtitle = "Verken de oude stad",
+                    Description = "Verblijf in stijl in ons Historisch Stadsappartement, gelegen in het hart van de oude stad. Het appartement combineert moderne luxe met historische charme en biedt een unieke ervaring. Wandel door smalle steegjes, ontdek historische bezienswaardigheden en proef lokale gerechten in de nabijgelegen restaurants. Het appartement is smaakvol ingericht en voorzien van alle moderne gemakken voor een comfortabel en cultureel verblijf.",
+                    Type = Location.LocationType.Apartment,
+                    Rooms = 2,
+                    NumberOfGuests = 4,
+                    FeaturesList = new List<Location.Features> { Location.Features.Wifi, Location.Features.Tv },
+                    PricePerDay = 130.0f,
+                    LandLordId = 1
                 }
             );
 
