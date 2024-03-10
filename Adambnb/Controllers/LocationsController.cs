@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Adambnb.Data;
 using Adambnb.Models;
+using Adambnb.Repositories;
 
 namespace Adambnb.Controllers
 {
@@ -15,10 +16,13 @@ namespace Adambnb.Controllers
     public class LocationsController : ControllerBase
     {
         private readonly AdambnbContext _context;
+        private readonly LocationRepository _locationRepository;
+
 
         public LocationsController(AdambnbContext context)
         {
             _context = context;
+            _locationRepository = new LocationRepository(context);
         }
 
         // GET: api/Locations
@@ -105,16 +109,11 @@ namespace Adambnb.Controllers
             return _context.Locations.Any(e => e.Id == id);
         }
 
+
         [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<Location>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Location>>> GetAllLocations()
         {
-            var locations = await _context.Locations.ToListAsync();
-
-            if (locations == null || !locations.Any())
-            {
-                return NotFound("No locations found.");
-            }
-
+            var locations = await _locationRepository.GetAllLocations();
             return Ok(locations);
         }
     }
