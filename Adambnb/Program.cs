@@ -1,13 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Adambnb.Data;
+using Adambnb.Mapping;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AdambnbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AdambnbContext") ?? throw new InvalidOperationException("Connection string 'AdambnbContext' not found.")));
 
 // Add services to the container.
-
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Adambnb.Data;
 using Adambnb.Models;
 using Adambnb.Repositories;
+using Adambnb.DTOs;
+using AutoMapper;
+using Adambnb.Mapping;
 
 namespace Adambnb.Controllers
 {
@@ -17,19 +20,23 @@ namespace Adambnb.Controllers
     {
         private readonly AdambnbContext _context;
         private readonly LocationRepository _locationRepository;
+        private readonly IMapper _mapper;
 
-
-        public LocationsController(AdambnbContext context)
+        public LocationsController(AdambnbContext context, IMapper mapper)
         {
             _context = context;
             _locationRepository = new LocationRepository(context);
+            _mapper = mapper;
         }
 
         // GET: api/Locations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
+        public async Task<ActionResult<IEnumerable<LocationDTO>>> GetLocations()
         {
-            return await _context.Locations.ToListAsync();
+            var locations = await _locationRepository.GetAllLocations();
+            var locationsDTO = _mapper.Map<List<LocationDTO>>(locations);
+
+            return Ok(locationsDTO);
         }
 
         // GET: api/Locations/5
