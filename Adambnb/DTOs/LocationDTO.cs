@@ -7,5 +7,7 @@
         public string Description { get; set; }
         public string ImageURL { get; set; }
         public string LandlordAvatarURL { get; set; }
+        public int Type { get; set; } 
+
     }
 }
