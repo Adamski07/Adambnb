@@ -9,6 +9,8 @@ builder.Services.AddDbContext<AdambnbContext>(options =>
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
+builder.Services.AddSwaggerGen();
+
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
