@@ -21,6 +21,13 @@ namespace Adambnb.Repositories
             return await _context.Locations.ToListAsync();
         }
 
+        public async Task<IEnumerable<Location>> GetAllLocationsWithImages()
+        {
+            return await _context.Locations
+                .Include(l => l.Images)
+                .ToListAsync();
+        }
+
         public async Task<Location> GetLocationById(int id)
         {
             return await _context.Locations.FindAsync(id);

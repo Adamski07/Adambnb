@@ -33,7 +33,7 @@ namespace Adambnb.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LocationDTO>>> GetLocations()
         {
-            var locations = await _locationRepository.GetAllLocations();
+            var locations = await _locationRepository.GetAllLocationsWithImages();
             var locationsDTO = _mapper.Map<List<LocationDTO>>(locations);
 
             return Ok(locationsDTO);
