@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Adambnb.Data;
 using Adambnb.Models;
-using Adambnb.Repositories;
+using Adambnb.Services;
 using Adambnb.DTOs;
 using AutoMapper;
-using Adambnb.Mapping;
 using Asp.Versioning;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adambnb.Controllers
 {
@@ -20,14 +15,12 @@ namespace Adambnb.Controllers
     [ApiController]
     public class LocationsController : ControllerBase
     {
-        private readonly AdambnbContext _context;
-        private readonly LocationRepository _locationRepository;
+        private readonly ILocationService _locationService;
         private readonly IMapper _mapper;
 
-        public LocationsController(AdambnbContext context, IMapper mapper)
+        public LocationsController(ILocationService locationService, IMapper mapper)
         {
-            _context = context;
-            _locationRepository = new LocationRepository(context);
+            _locationService = locationService;
             _mapper = mapper;
         }
 
@@ -35,7 +28,7 @@ namespace Adambnb.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LocationDTO>>> GetLocations()
         {
-            var locations = await _locationRepository.GetAllLocationsWithImages();
+            var locations = await _locationService.GetAllLocationsWithImages();
             var locationsDTO = _mapper.Map<List<LocationDTO>>(locations);
 
             return Ok(locationsDTO);
@@ -45,7 +38,7 @@ namespace Adambnb.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Location>> GetLocation(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _locationService.GetLocationById(id);
 
             if (location == null)
             {
@@ -56,7 +49,6 @@ namespace Adambnb.Controllers
         }
 
         // PUT: api/Locations/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLocation(int id, Location location)
         {
@@ -65,15 +57,13 @@ namespace Adambnb.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(location).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _locationService.UpdateLocation(location);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!LocationExists(id))
+                if (!_locationService.LocationExists(id))
                 {
                     return NotFound();
                 }
@@ -87,13 +77,10 @@ namespace Adambnb.Controllers
         }
 
         // POST: api/Locations
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Location>> PostLocation(Location location)
         {
-            _context.Locations.Add(location);
-            await _context.SaveChangesAsync();
-
+            await _locationService.AddLocation(location);
             return CreatedAtAction("GetLocation", new { id = location.Id }, location);
         }
 
@@ -101,29 +88,47 @@ namespace Adambnb.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _locationService.GetLocationById(id);
             if (location == null)
             {
                 return NotFound();
             }
 
-            _context.Locations.Remove(location);
-            await _context.SaveChangesAsync();
-
+            await _locationService.DeleteLocation(id);
             return NoContent();
         }
-
-        private bool LocationExists(int id)
-        {
-            return _context.Locations.Any(e => e.Id == id);
-        }
-
 
         [HttpGet("GetAll")]
         public async Task<ActionResult<IEnumerable<Location>>> GetAllLocations()
         {
-            var locations = await _locationRepository.GetAllLocations();
+            var locations = await _locationService.GetAllLocations();
             return Ok(locations);
+        }
+
+        [HttpPost("Search")]
+        public async Task<ActionResult<IEnumerable<LocationDTO>>> SearchLocations([FromBody] LocationSearchDto searchDto)
+        {
+            var locations = await _locationService.SearchLocations(searchDto);
+            var locationsDTO = _mapper.Map<List<LocationV2DTO>>(locations);
+            return Ok(locationsDTO);
+        }
+
+        [HttpGet("GetMaxPrice")]
+        public async Task<ActionResult<int>> GetMaxPrice()
+        {
+            var maxPrice = await _locationService.GetMaxPrice();
+            return Ok(new { Price = maxPrice });
+        }
+
+        [HttpGet("GetDetails/{id}")]
+        public async Task<ActionResult<LocationDetailsDto>> GetLocationDetails(int id)
+        {
+            var locationDetails = await _locationService.GetLocationDetails(id);
+            if (locationDetails == null)
+            {
+                return NotFound();
+            }
+            return Ok(locationDetails);
         }
     }
 }

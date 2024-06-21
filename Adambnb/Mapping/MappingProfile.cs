@@ -19,12 +19,23 @@
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (int)src.Type))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PricePerDay));
 
+            CreateMap<Location, LocationDTO>();
+            CreateMap<Location, LocationDetailsDto>()
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Landlord, opt => opt.MapFrom(src => src.LandLord));
+            CreateMap<Image, ImageDto>();
+            CreateMap<LandLord, LandlordDto>();
+
         }
 
         private string GetCoverImageUrl(List<Image> images)
         {
-            var coverImage = images.FirstOrDefault(img => img.IsCover);
-            return coverImage?.Url;
+            if (images != null && images.Any())
+            {
+                var coverImage = images.FirstOrDefault(img => img.IsCover);
+                return coverImage?.Url;
+            }
+            return null; // Return null if no images or no cover image found
         }
     }
 
