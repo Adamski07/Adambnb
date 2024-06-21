@@ -11,9 +11,11 @@ using Adambnb.Repositories;
 using Adambnb.DTOs;
 using AutoMapper;
 using Adambnb.Mapping;
+using Asp.Versioning;
 
 namespace Adambnb.Controllers
 {
+    [ApiVersion("1.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class LocationsController : ControllerBase

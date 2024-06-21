@@ -11,7 +11,13 @@
             CreateMap<Location, LocationDTO>()
                 .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => GetCoverImageUrl(src.Images)))
                 .ForMember(dest => dest.LandlordAvatarURL, opt => opt.MapFrom(src => src.LandLord.Avatar.Url))
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (int)src.Type)); 
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (int)src.Type));
+
+            CreateMap<Location, LocationV2DTO>()
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => GetCoverImageUrl(src.Images)))
+                .ForMember(dest => dest.LandlordAvatarURL, opt => opt.MapFrom(src => src.LandLord.Avatar.Url))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (int)src.Type))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PricePerDay));
 
         }
 
