@@ -11,6 +11,7 @@ using System.Text.Json.Serialization;
 using Asp.Versioning;
 using Adambnb;
 using Adambnb.Services;
+using Adambnb.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +22,20 @@ builder.Services.AddDbContext<AdambnbContext>(options =>
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped<ILocationService, LocationService>();
+
+builder.Services.AddScoped<CostumerRepository>();
+builder.Services.AddScoped<ICostumerService, CostumerService>();
+
+builder.Services.AddScoped<ImageRepository>();
+builder.Services.AddScoped<IImageService, ImageService>();
+
+builder.Services.AddScoped<LandLordRepository>();
+builder.Services.AddScoped<ILandLordService, LandLordService>();
+
+builder.Services.AddScoped<ReservationRepository>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 
 builder.Services.AddApiVersioning(options =>

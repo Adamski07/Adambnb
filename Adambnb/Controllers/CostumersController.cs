@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Adambnb.Data;
 using Adambnb.Models;
+using Adambnb.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adambnb.Controllers
 {
@@ -14,36 +11,36 @@ namespace Adambnb.Controllers
     [ApiController]
     public class CostumersController : ControllerBase
     {
-        private readonly AdambnbContext _context;
+        private readonly ICostumerService _costumerService;
 
-        public CostumersController(AdambnbContext context)
+        public CostumersController(ICostumerService costumerService)
         {
-            _context = context;
+            _costumerService = costumerService;
         }
 
         // GET: api/Costumers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Costumer>>> GetCostumers()
         {
-            return await _context.Costumers.ToListAsync();
+            var costumers = await _costumerService.GetAllCostumers();
+            return Ok(costumers);
         }
 
         // GET: api/Costumers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Costumer>> GetCostumer(int id)
         {
-            var costumer = await _context.Costumers.FindAsync(id);
+            var costumer = await _costumerService.GetCostumerById(id);
 
             if (costumer == null)
             {
                 return NotFound();
             }
 
-            return costumer;
+            return Ok(costumer);
         }
 
         // PUT: api/Costumers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCostumer(int id, Costumer costumer)
         {
@@ -52,15 +49,13 @@ namespace Adambnb.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(costumer).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _costumerService.UpdateCostumer(costumer);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CostumerExists(id))
+                if (!_costumerService.CostumerExists(id))
                 {
                     return NotFound();
                 }
@@ -74,13 +69,10 @@ namespace Adambnb.Controllers
         }
 
         // POST: api/Costumers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Costumer>> PostCostumer(Costumer costumer)
         {
-            _context.Costumers.Add(costumer);
-            await _context.SaveChangesAsync();
-
+            await _costumerService.AddCostumer(costumer);
             return CreatedAtAction("GetCostumer", new { id = costumer.Id }, costumer);
         }
 
@@ -88,21 +80,14 @@ namespace Adambnb.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCostumer(int id)
         {
-            var costumer = await _context.Costumers.FindAsync(id);
+            var costumer = await _costumerService.GetCostumerById(id);
             if (costumer == null)
             {
                 return NotFound();
             }
 
-            _context.Costumers.Remove(costumer);
-            await _context.SaveChangesAsync();
-
+            await _costumerService.DeleteCostumer(id);
             return NoContent();
-        }
-
-        private bool CostumerExists(int id)
-        {
-            return _context.Costumers.Any(e => e.Id == id);
         }
     }
 }

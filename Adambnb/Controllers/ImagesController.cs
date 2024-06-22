@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Adambnb.Data;
 using Adambnb.Models;
+using Adambnb.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adambnb.Controllers
 {
@@ -14,36 +11,36 @@ namespace Adambnb.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-        private readonly AdambnbContext _context;
+        private readonly IImageService _imageService;
 
-        public ImagesController(AdambnbContext context)
+        public ImagesController(IImageService imageService)
         {
-            _context = context;
+            _imageService = imageService;
         }
 
         // GET: api/Images
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Image>>> GetImages()
         {
-            return await _context.Images.ToListAsync();
+            var images = await _imageService.GetAllImages();
+            return Ok(images);
         }
 
         // GET: api/Images/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Image>> GetImage(int id)
         {
-            var image = await _context.Images.FindAsync(id);
+            var image = await _imageService.GetImageById(id);
 
             if (image == null)
             {
                 return NotFound();
             }
 
-            return image;
+            return Ok(image);
         }
 
         // PUT: api/Images/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutImage(int id, Image image)
         {
@@ -52,15 +49,13 @@ namespace Adambnb.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(image).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _imageService.UpdateImage(image);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ImageExists(id))
+                if (!_imageService.ImageExists(id))
                 {
                     return NotFound();
                 }
@@ -74,13 +69,10 @@ namespace Adambnb.Controllers
         }
 
         // POST: api/Images
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Image>> PostImage(Image image)
         {
-            _context.Images.Add(image);
-            await _context.SaveChangesAsync();
-
+            await _imageService.AddImage(image);
             return CreatedAtAction("GetImage", new { id = image.Id }, image);
         }
 
@@ -88,21 +80,14 @@ namespace Adambnb.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteImage(int id)
         {
-            var image = await _context.Images.FindAsync(id);
+            var image = await _imageService.GetImageById(id);
             if (image == null)
             {
                 return NotFound();
             }
 
-            _context.Images.Remove(image);
-            await _context.SaveChangesAsync();
-
+            await _imageService.DeleteImage(id);
             return NoContent();
-        }
-
-        private bool ImageExists(int id)
-        {
-            return _context.Images.Any(e => e.Id == id);
         }
     }
 }

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Adambnb.Data;
 using Adambnb.Models;
+using Adambnb.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Adambnb.Controllers
 {
@@ -14,36 +11,36 @@ namespace Adambnb.Controllers
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        private readonly AdambnbContext _context;
+        private readonly IReservationService _reservationService;
 
-        public ReservationsController(AdambnbContext context)
+        public ReservationsController(IReservationService reservationService)
         {
-            _context = context;
+            _reservationService = reservationService;
         }
 
         // GET: api/Reservations
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
         {
-            return await _context.Reservations.ToListAsync();
+            var reservations = await _reservationService.GetAllReservations();
+            return Ok(reservations);
         }
 
         // GET: api/Reservations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Reservation>> GetReservation(int id)
         {
-            var reservation = await _context.Reservations.FindAsync(id);
+            var reservation = await _reservationService.GetReservationById(id);
 
             if (reservation == null)
             {
                 return NotFound();
             }
 
-            return reservation;
+            return Ok(reservation);
         }
 
         // PUT: api/Reservations/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(int id, Reservation reservation)
         {
@@ -52,15 +49,13 @@ namespace Adambnb.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(reservation).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _reservationService.UpdateReservation(reservation);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ReservationExists(id))
+                if (!_reservationService.ReservationExists(id))
                 {
                     return NotFound();
                 }
@@ -74,13 +69,10 @@ namespace Adambnb.Controllers
         }
 
         // POST: api/Reservations
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
-            _context.Reservations.Add(reservation);
-            await _context.SaveChangesAsync();
-
+            await _reservationService.AddReservation(reservation);
             return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
         }
 
@@ -88,21 +80,14 @@ namespace Adambnb.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReservation(int id)
         {
-            var reservation = await _context.Reservations.FindAsync(id);
+            var reservation = await _reservationService.GetReservationById(id);
             if (reservation == null)
             {
                 return NotFound();
             }
 
-            _context.Reservations.Remove(reservation);
-            await _context.SaveChangesAsync();
-
+            await _reservationService.DeleteReservation(id);
             return NoContent();
-        }
-
-        private bool ReservationExists(int id)
-        {
-            return _context.Reservations.Any(e => e.Id == id);
         }
     }
 }
