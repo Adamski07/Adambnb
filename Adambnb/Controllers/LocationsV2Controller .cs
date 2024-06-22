@@ -1,6 +1,7 @@
 ﻿using Adambnb.Data;
 using Adambnb.DTOs;
 using Adambnb.Repositories;
+using Adambnb.Services;
 using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +13,14 @@ namespace Adambnb.Controllers
     [ApiController]
     public class Locations2Controller : ControllerBase
     {
-        private readonly AdambnbContext _context;
-        private readonly LocationRepository _locationRepository;
+        private readonly ILocationService _locationService;
         private readonly IMapper _mapper;
 
-        public Locations2Controller(AdambnbContext context, IMapper mapper)
+        public Locations2Controller(ILocationService locationService, IMapper mapper)
         {
-            _context = context;
-            _locationRepository = new LocationRepository(context);
+            _locationService = locationService;
             _mapper = mapper;
+
         }
 
         // GET: api/Locations?api-version=2.0
@@ -28,7 +28,7 @@ namespace Adambnb.Controllers
         [Route("")]
         public async Task<ActionResult<IEnumerable<LocationV2DTO>>> GetLocations()
         {
-            var locations = await _locationRepository.GetAllLocationsWithImages();
+            var locations = await _locationService.GetAllLocationsWithImages();
             var locationsV2DTO = _mapper.Map<List<LocationV2DTO>>(locations);
 
             return Ok(locationsV2DTO);

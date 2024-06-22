@@ -26,10 +26,10 @@ namespace Adambnb.Controllers
 
         // GET: api/Locations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LocationDTO>>> GetLocations()
+        public async Task<ActionResult<IEnumerable<LocationV2DTO>>> GetLocations()
         {
             var locations = await _locationService.GetAllLocationsWithImages();
-            var locationsDTO = _mapper.Map<List<LocationDTO>>(locations);
+            var locationsDTO = _mapper.Map<List<LocationV2DTO>>(locations);
 
             return Ok(locationsDTO);
         }
@@ -106,7 +106,7 @@ namespace Adambnb.Controllers
         }
 
         [HttpPost("Search")]
-        public async Task<ActionResult<IEnumerable<LocationDTO>>> SearchLocations([FromBody] LocationSearchDto searchDto)
+        public async Task<ActionResult<IEnumerable<LocationV2DTO>>> SearchLocations([FromBody] LocationSearchDto searchDto)
         {
             var locations = await _locationService.SearchLocations(searchDto);
             var locationsDTO = _mapper.Map<List<LocationV2DTO>>(locations);

@@ -35,7 +35,7 @@
                 var coverImage = images.FirstOrDefault(img => img.IsCover);
                 return coverImage?.Url;
             }
-            return null; // Return null if no images or no cover image found
+            return null;
         }
     }
 

@@ -148,7 +148,7 @@ namespace Adambnb.Services
                 Landlord = new LandlordDto
                 {
                     Name = location.LandLord.FirstName,
-                    Avatar = location.LandLord.Avatar.Url
+                    Avatar = location.LandLord.Avatar?.Url
                 }
             };
         }
