@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Adambnb.Models;
 using Adambnb.Repositories;
@@ -14,29 +15,29 @@ namespace Adambnb.Services
             _imageRepository = imageRepository;
         }
 
-        public async Task<IEnumerable<Image>> GetAllImages()
+        public async Task<IEnumerable<Image>> GetAllImages(CancellationToken cancellationToken)
         {
-            return await _imageRepository.GetAllImages();
+            return await _imageRepository.GetAllImages(cancellationToken);
         }
 
-        public async Task<Image> GetImageById(int id)
+        public async Task<Image> GetImageById(int id, CancellationToken cancellationToken)
         {
-            return await _imageRepository.GetImageById(id);
+            return await _imageRepository.GetImageById(id, cancellationToken);
         }
 
-        public async Task AddImage(Image image)
+        public async Task AddImage(Image image, CancellationToken cancellationToken)
         {
-            await _imageRepository.CreateImage(image);
+            await _imageRepository.CreateImage(image, cancellationToken);
         }
 
-        public async Task UpdateImage(Image image)
+        public async Task UpdateImage(Image image, CancellationToken cancellationToken)
         {
-            await _imageRepository.UpdateImage(image.Id, image);
+            await _imageRepository.UpdateImage(image.Id, image, cancellationToken);
         }
 
-        public async Task DeleteImage(int id)
+        public async Task DeleteImage(int id, CancellationToken cancellationToken)
         {
-            await _imageRepository.DeleteImage(id);
+            await _imageRepository.DeleteImage(id, cancellationToken);
         }
 
         public bool ImageExists(int id)

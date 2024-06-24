@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Adambnb.Data;
@@ -16,14 +16,14 @@ namespace Adambnb.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<LandLord>> GetAllLandLords()
+        public async Task<IEnumerable<LandLord>> GetAllLandLords(CancellationToken cancellationToken)
         {
-            return await _context.LandLords.ToListAsync();
+            return await _context.LandLords.ToListAsync(cancellationToken);
         }
 
-        public async Task<LandLord> GetLandLordById(int id)
+        public async Task<LandLord> GetLandLordById(int id, CancellationToken cancellationToken)
         {
-            return await _context.LandLords.FindAsync(id);
+            return await _context.LandLords.FindAsync(new object[] { id }, cancellationToken);
         }
 
         public async Task<bool> LandLordExists(int id)
@@ -31,14 +31,14 @@ namespace Adambnb.Repositories
             return await _context.LandLords.AnyAsync(e => e.Id == id);
         }
 
-        public async Task<LandLord> CreateLandLord(LandLord landLord)
+        public async Task<LandLord> CreateLandLord(LandLord landLord, CancellationToken cancellationToken)
         {
             _context.LandLords.Add(landLord);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return landLord;
         }
 
-        public async Task<LandLord> UpdateLandLord(int id, LandLord landLord)
+        public async Task<LandLord> UpdateLandLord(int id, LandLord landLord, CancellationToken cancellationToken)
         {
             if (id != landLord.Id)
             {
@@ -49,7 +49,7 @@ namespace Adambnb.Repositories
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
                 return landLord;
             }
             catch (DbUpdateConcurrencyException)
@@ -65,16 +65,16 @@ namespace Adambnb.Repositories
             }
         }
 
-        public async Task<bool> DeleteLandLord(int id)
+        public async Task<bool> DeleteLandLord(int id, CancellationToken cancellationToken)
         {
-            var landLord = await _context.LandLords.FindAsync(id);
+            var landLord = await _context.LandLords.FindAsync(new object[] { id }, cancellationToken);
             if (landLord == null)
             {
                 return false;
             }
 
             _context.LandLords.Remove(landLord);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return true;
         }

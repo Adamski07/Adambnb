@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Adambnb.Models;
 using Adambnb.Repositories;
@@ -14,29 +15,29 @@ namespace Adambnb.Services
             _costumerRepository = costumerRepository;
         }
 
-        public async Task<IEnumerable<Costumer>> GetAllCostumers()
+        public async Task<IEnumerable<Costumer>> GetAllCostumers(CancellationToken cancellationToken)
         {
-            return await _costumerRepository.GetAllCostumers();
+            return await _costumerRepository.GetAllCostumers(cancellationToken);
         }
 
-        public async Task<Costumer> GetCostumerById(int id)
+        public async Task<Costumer> GetCostumerById(int id, CancellationToken cancellationToken)
         {
-            return await _costumerRepository.GetCostumerById(id);
+            return await _costumerRepository.GetCostumerById(id, cancellationToken);
         }
 
-        public async Task AddCostumer(Costumer costumer)
+        public async Task AddCostumer(Costumer costumer, CancellationToken cancellationToken)
         {
-            await _costumerRepository.CreateCostumer(costumer);
+            await _costumerRepository.CreateCostumer(costumer, cancellationToken);
         }
 
-        public async Task UpdateCostumer(Costumer costumer)
+        public async Task UpdateCostumer(Costumer costumer, CancellationToken cancellationToken)
         {
-            await _costumerRepository.UpdateCostumer(costumer.Id, costumer);
+            await _costumerRepository.UpdateCostumer(costumer.Id, costumer, cancellationToken);
         }
 
-        public async Task DeleteCostumer(int id)
+        public async Task DeleteCostumer(int id, CancellationToken cancellationToken)
         {
-            await _costumerRepository.DeleteCostumer(id);
+            await _costumerRepository.DeleteCostumer(id, cancellationToken);
         }
 
         public bool CostumerExists(int id)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Adambnb.Models;
@@ -20,17 +21,17 @@ namespace Adambnb.Controllers
 
         // GET: api/Images
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Image>>> GetImages()
+        public async Task<ActionResult<IEnumerable<Image>>> GetImages(CancellationToken cancellationToken)
         {
-            var images = await _imageService.GetAllImages();
+            var images = await _imageService.GetAllImages(cancellationToken);
             return Ok(images);
         }
 
         // GET: api/Images/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Image>> GetImage(int id)
+        public async Task<ActionResult<Image>> GetImage(int id, CancellationToken cancellationToken)
         {
-            var image = await _imageService.GetImageById(id);
+            var image = await _imageService.GetImageById(id, cancellationToken);
 
             if (image == null)
             {
@@ -42,7 +43,7 @@ namespace Adambnb.Controllers
 
         // PUT: api/Images/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutImage(int id, Image image)
+        public async Task<IActionResult> PutImage(int id, Image image, CancellationToken cancellationToken)
         {
             if (id != image.Id)
             {
@@ -51,7 +52,7 @@ namespace Adambnb.Controllers
 
             try
             {
-                await _imageService.UpdateImage(image);
+                await _imageService.UpdateImage(image, cancellationToken);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -70,23 +71,23 @@ namespace Adambnb.Controllers
 
         // POST: api/Images
         [HttpPost]
-        public async Task<ActionResult<Image>> PostImage(Image image)
+        public async Task<ActionResult<Image>> PostImage(Image image, CancellationToken cancellationToken)
         {
-            await _imageService.AddImage(image);
+            await _imageService.AddImage(image, cancellationToken);
             return CreatedAtAction("GetImage", new { id = image.Id }, image);
         }
 
         // DELETE: api/Images/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteImage(int id)
+        public async Task<IActionResult> DeleteImage(int id, CancellationToken cancellationToken)
         {
-            var image = await _imageService.GetImageById(id);
+            var image = await _imageService.GetImageById(id, cancellationToken);
             if (image == null)
             {
                 return NotFound();
             }
 
-            await _imageService.DeleteImage(id);
+            await _imageService.DeleteImage(id, cancellationToken);
             return NoContent();
         }
     }

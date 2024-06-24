@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Adambnb.Models;
 using Adambnb.Repositories;
@@ -13,36 +15,35 @@ namespace Adambnb.Services
         private readonly ReservationRepository _reservationRepository;
         private readonly AdambnbContext _context;
 
-
         public ReservationService(ReservationRepository reservationRepository, AdambnbContext context)
         {
             _reservationRepository = reservationRepository;
             _context = context;
         }
 
-        public async Task<IEnumerable<Reservation>> GetAllReservations()
+        public async Task<IEnumerable<Reservation>> GetAllReservations(CancellationToken cancellationToken)
         {
-            return await _reservationRepository.GetAllReservations();
+            return await _reservationRepository.GetAllReservations(cancellationToken);
         }
 
-        public async Task<Reservation> GetReservationById(int id)
+        public async Task<Reservation> GetReservationById(int id, CancellationToken cancellationToken)
         {
-            return await _reservationRepository.GetReservationById(id);
+            return await _reservationRepository.GetReservationById(id, cancellationToken);
         }
 
-        public async Task AddReservation(Reservation reservation)
+        public async Task AddReservation(Reservation reservation, CancellationToken cancellationToken)
         {
-            await _reservationRepository.CreateReservation(reservation);
+            await _reservationRepository.CreateReservation(reservation, cancellationToken);
         }
 
-        public async Task UpdateReservation(Reservation reservation)
+        public async Task UpdateReservation(Reservation reservation, CancellationToken cancellationToken)
         {
-            await _reservationRepository.UpdateReservation(reservation.Id, reservation);
+            await _reservationRepository.UpdateReservation(reservation.Id, reservation, cancellationToken);
         }
 
-        public async Task DeleteReservation(int id)
+        public async Task DeleteReservation(int id, CancellationToken cancellationToken)
         {
-            await _reservationRepository.DeleteReservation(id);
+            await _reservationRepository.DeleteReservation(id, cancellationToken);
         }
 
         public bool ReservationExists(int id)
@@ -87,7 +88,7 @@ namespace Adambnb.Services
                 CostumerId = customer.Id,
                 Discount = requestDto.Discount ?? 0
             };
-            await _reservationRepository.CreateReservation(reservation);
+            await _reservationRepository.CreateReservation(reservation, default); // No cancellation token for this call
 
             // Calculate price and other details
             var location = await _context.Locations.FindAsync(requestDto.LocationId);

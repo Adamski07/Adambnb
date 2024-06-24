@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 using Adambnb.Models;
 using Adambnb.DTOs;
 
@@ -7,17 +8,16 @@ namespace Adambnb.Services
 {
     public interface ILocationService
     {
-        Task<IEnumerable<Location>> GetAllLocations();
-        Task<Location> GetLocationById(int id);
-        Task AddLocation(Location location);
-        Task UpdateLocation(Location location);
-        Task DeleteLocation(int id);
-        Task<IEnumerable<Location>> GetAllLocationsWithImages();
+        Task<IEnumerable<Location>> GetAllLocations(CancellationToken cancellationToken);
+        Task<Location> GetLocationById(int id, CancellationToken cancellationToken);
+        Task AddLocation(Location location, CancellationToken cancellationToken);
+        Task UpdateLocation(Location location, CancellationToken cancellationToken);
+        Task DeleteLocation(int id, CancellationToken cancellationToken);
+        Task<IEnumerable<Location>> GetAllLocationsWithImages(CancellationToken cancellationToken);
         bool LocationExists(int id);
-        Task<IEnumerable<Location>> SearchLocations(LocationSearchDto searchDto);
-        Task<int> GetMaxPrice();
-        Task<LocationDetailsDto> GetLocationDetails(int id);
-        Task<IEnumerable<DateTime>> GetUnavailableDates(int locationId);
-
+        Task<IEnumerable<Location>> SearchLocations(LocationSearchDto searchDto, CancellationToken cancellationToken);
+        Task<int> GetMaxPrice(CancellationToken cancellationToken);
+        Task<LocationDetailsDto> GetLocationDetails(int id, CancellationToken cancellationToken);
+        Task<IEnumerable<DateTime>> GetUnavailableDates(int locationId, CancellationToken cancellationToken);
     }
 }

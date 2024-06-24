@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Adambnb.Models;
 using Adambnb.Repositories;
@@ -14,29 +15,29 @@ namespace Adambnb.Services
             _landLordRepository = landLordRepository;
         }
 
-        public async Task<IEnumerable<LandLord>> GetAllLandLords()
+        public async Task<IEnumerable<LandLord>> GetAllLandLords(CancellationToken cancellationToken)
         {
-            return await _landLordRepository.GetAllLandLords();
+            return await _landLordRepository.GetAllLandLords(cancellationToken);
         }
 
-        public async Task<LandLord> GetLandLordById(int id)
+        public async Task<LandLord> GetLandLordById(int id, CancellationToken cancellationToken)
         {
-            return await _landLordRepository.GetLandLordById(id);
+            return await _landLordRepository.GetLandLordById(id, cancellationToken);
         }
 
-        public async Task AddLandLord(LandLord landLord)
+        public async Task AddLandLord(LandLord landLord, CancellationToken cancellationToken)
         {
-            await _landLordRepository.CreateLandLord(landLord);
+            await _landLordRepository.CreateLandLord(landLord, cancellationToken);
         }
 
-        public async Task UpdateLandLord(LandLord landLord)
+        public async Task UpdateLandLord(LandLord landLord, CancellationToken cancellationToken)
         {
-            await _landLordRepository.UpdateLandLord(landLord.Id, landLord);
+            await _landLordRepository.UpdateLandLord(landLord.Id, landLord, cancellationToken);
         }
 
-        public async Task DeleteLandLord(int id)
+        public async Task DeleteLandLord(int id, CancellationToken cancellationToken)
         {
-            await _landLordRepository.DeleteLandLord(id);
+            await _landLordRepository.DeleteLandLord(id, cancellationToken);
         }
 
         public bool LandLordExists(int id)

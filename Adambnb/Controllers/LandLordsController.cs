@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Adambnb.Models;
@@ -20,17 +21,17 @@ namespace Adambnb.Controllers
 
         // GET: api/LandLords
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LandLord>>> GetLandLords()
+        public async Task<ActionResult<IEnumerable<LandLord>>> GetLandLords(CancellationToken cancellationToken)
         {
-            var landLords = await _landLordService.GetAllLandLords();
+            var landLords = await _landLordService.GetAllLandLords(cancellationToken);
             return Ok(landLords);
         }
 
         // GET: api/LandLords/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<LandLord>> GetLandLord(int id)
+        public async Task<ActionResult<LandLord>> GetLandLord(int id, CancellationToken cancellationToken)
         {
-            var landLord = await _landLordService.GetLandLordById(id);
+            var landLord = await _landLordService.GetLandLordById(id, cancellationToken);
 
             if (landLord == null)
             {
@@ -42,7 +43,7 @@ namespace Adambnb.Controllers
 
         // PUT: api/LandLords/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLandLord(int id, LandLord landLord)
+        public async Task<IActionResult> PutLandLord(int id, LandLord landLord, CancellationToken cancellationToken)
         {
             if (id != landLord.Id)
             {
@@ -51,7 +52,7 @@ namespace Adambnb.Controllers
 
             try
             {
-                await _landLordService.UpdateLandLord(landLord);
+                await _landLordService.UpdateLandLord(landLord, cancellationToken);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -70,23 +71,23 @@ namespace Adambnb.Controllers
 
         // POST: api/LandLords
         [HttpPost]
-        public async Task<ActionResult<LandLord>> PostLandLord(LandLord landLord)
+        public async Task<ActionResult<LandLord>> PostLandLord(LandLord landLord, CancellationToken cancellationToken)
         {
-            await _landLordService.AddLandLord(landLord);
+            await _landLordService.AddLandLord(landLord, cancellationToken);
             return CreatedAtAction("GetLandLord", new { id = landLord.Id }, landLord);
         }
 
         // DELETE: api/LandLords/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLandLord(int id)
+        public async Task<IActionResult> DeleteLandLord(int id, CancellationToken cancellationToken)
         {
-            var landLord = await _landLordService.GetLandLordById(id);
+            var landLord = await _landLordService.GetLandLordById(id, cancellationToken);
             if (landLord == null)
             {
                 return NotFound();
             }
 
-            await _landLordService.DeleteLandLord(id);
+            await _landLordService.DeleteLandLord(id, cancellationToken);
             return NoContent();
         }
     }

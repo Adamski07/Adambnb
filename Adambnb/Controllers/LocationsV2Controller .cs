@@ -26,9 +26,9 @@ namespace Adambnb.Controllers
         // GET: api/Locations?api-version=2.0
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<IEnumerable<LocationV2DTO>>> GetLocations()
+        public async Task<ActionResult<IEnumerable<LocationV2DTO>>> GetLocations(CancellationToken cancellationToken)
         {
-            var locations = await _locationService.GetAllLocationsWithImages();
+            var locations = await _locationService.GetAllLocationsWithImages(cancellationToken);
             var locationsV2DTO = _mapper.Map<List<LocationV2DTO>>(locations);
 
             return Ok(locationsV2DTO);

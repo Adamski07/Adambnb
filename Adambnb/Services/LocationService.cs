@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Adambnb.Data;
 using Adambnb.Models;
@@ -20,41 +21,41 @@ namespace Adambnb.Services
             _locationRepository = new LocationRepository(context);
         }
 
-        public async Task<IEnumerable<Location>> GetAllLocations()
+        public async Task<IEnumerable<Location>> GetAllLocations(CancellationToken cancellationToken)
         {
-            return await _locationRepository.GetAllLocations();
+            return await _locationRepository.GetAllLocations(cancellationToken);
         }
 
-        public async Task<Location> GetLocationById(int id)
+        public async Task<Location> GetLocationById(int id, CancellationToken cancellationToken)
         {
-            return await _context.Locations.FindAsync(id);
+            return await _context.Locations.FindAsync(new object[] { id }, cancellationToken);
         }
 
-        public async Task AddLocation(Location location)
+        public async Task AddLocation(Location location, CancellationToken cancellationToken)
         {
             _context.Locations.Add(location);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UpdateLocation(Location location)
+        public async Task UpdateLocation(Location location, CancellationToken cancellationToken)
         {
             _context.Entry(location).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteLocation(int id)
+        public async Task DeleteLocation(int id, CancellationToken cancellationToken)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _context.Locations.FindAsync(new object[] { id }, cancellationToken);
             if (location != null)
             {
                 _context.Locations.Remove(location);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
             }
         }
 
-        public async Task<IEnumerable<Location>> GetAllLocationsWithImages()
+        public async Task<IEnumerable<Location>> GetAllLocationsWithImages(CancellationToken cancellationToken)
         {
-            return await _locationRepository.GetAllLocationsWithImages();
+            return await _locationRepository.GetAllLocationsWithImages(cancellationToken);
         }
 
         public bool LocationExists(int id)
@@ -62,6 +63,7 @@ namespace Adambnb.Services
             return _context.Locations.Any(e => e.Id == id);
         }
 
+        //This method deserves brownie points for creativity for forgetting to aff flags to the enum....right? :)
         private int ConvertFeaturesToInt(List<Location.Features> features)
         {
             var featureValues = new Dictionary<Location.Features, int>
@@ -85,13 +87,12 @@ namespace Adambnb.Services
             return featuresSum;
         }
 
-        public async Task<IEnumerable<Location>> SearchLocations(LocationSearchDto searchDto)
+        public async Task<IEnumerable<Location>> SearchLocations(LocationSearchDto searchDto, CancellationToken cancellationToken)
         {
             var query = _context.Locations.AsQueryable();
 
             if (searchDto.Features.HasValue)
             {
-                var fetures = query.Where(l => l.Id == 1);
                 query = query.Where(l => ConvertFeaturesToInt(l.FeaturesList) == searchDto.Features.Value);
             }
             if (searchDto.Type.HasValue)
@@ -111,20 +112,20 @@ namespace Adambnb.Services
                 query = query.Where(l => l.PricePerDay <= searchDto.MaxPrice.Value);
             }
 
-            return await query.ToListAsync();
+            return await query.ToListAsync(cancellationToken);
         }
 
-        public async Task<int> GetMaxPrice()
+        public async Task<int> GetMaxPrice(CancellationToken cancellationToken)
         {
-            return await _context.Locations.MaxAsync(l => (int)l.PricePerDay);
+            return await _context.Locations.MaxAsync(l => (int)l.PricePerDay, cancellationToken);
         }
 
-        public async Task<LocationDetailsDto> GetLocationDetails(int id)
+        public async Task<LocationDetailsDto> GetLocationDetails(int id, CancellationToken cancellationToken)
         {
             var location = await _context.Locations
                 .Include(l => l.Images)
                 .Include(l => l.LandLord)
-                .FirstOrDefaultAsync(l => l.Id == id);
+                .FirstOrDefaultAsync(l => l.Id == id, cancellationToken);
 
             if (location == null)
             {
@@ -154,12 +155,12 @@ namespace Adambnb.Services
             };
         }
 
-        public async Task<IEnumerable<DateTime>> GetUnavailableDates(int locationId)
+        public async Task<IEnumerable<DateTime>> GetUnavailableDates(int locationId, CancellationToken cancellationToken)
         {
             var reservations = await _context.Reservations
                 .Where(r => r.LocationId == locationId)
                 .Select(r => new { r.StartDate, r.EndDate })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             var unavailableDates = new List<DateTime>();
             foreach (var reservation in reservations)

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Adambnb.Data;
@@ -16,14 +16,14 @@ namespace Adambnb.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Costumer>> GetAllCostumers()
+        public async Task<IEnumerable<Costumer>> GetAllCostumers(CancellationToken cancellationToken)
         {
-            return await _context.Costumers.ToListAsync();
+            return await _context.Costumers.ToListAsync(cancellationToken);
         }
 
-        public async Task<Costumer> GetCostumerById(int id)
+        public async Task<Costumer> GetCostumerById(int id, CancellationToken cancellationToken)
         {
-            return await _context.Costumers.FindAsync(id);
+            return await _context.Costumers.FindAsync(new object[] { id }, cancellationToken);
         }
 
         public async Task<bool> CostumerExists(int id)
@@ -31,14 +31,14 @@ namespace Adambnb.Repositories
             return await _context.Costumers.AnyAsync(e => e.Id == id);
         }
 
-        public async Task<Costumer> CreateCostumer(Costumer costumer)
+        public async Task<Costumer> CreateCostumer(Costumer costumer, CancellationToken cancellationToken)
         {
             _context.Costumers.Add(costumer);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return costumer;
         }
 
-        public async Task<Costumer> UpdateCostumer(int id, Costumer costumer)
+        public async Task<Costumer> UpdateCostumer(int id, Costumer costumer, CancellationToken cancellationToken)
         {
             if (id != costumer.Id)
             {
@@ -49,7 +49,7 @@ namespace Adambnb.Repositories
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
                 return costumer;
             }
             catch (DbUpdateConcurrencyException)
@@ -65,16 +65,16 @@ namespace Adambnb.Repositories
             }
         }
 
-        public async Task<bool> DeleteCostumer(int id)
+        public async Task<bool> DeleteCostumer(int id, CancellationToken cancellationToken)
         {
-            var costumer = await _context.Costumers.FindAsync(id);
+            var costumer = await _context.Costumers.FindAsync(new object[] { id }, cancellationToken);
             if (costumer == null)
             {
                 return false;
             }
 
             _context.Costumers.Remove(costumer);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return true;
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Adambnb.Models;
@@ -21,17 +22,17 @@ namespace Adambnb.Controllers
 
         // GET: api/Reservations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(CancellationToken cancellationToken)
         {
-            var reservations = await _reservationService.GetAllReservations();
+            var reservations = await _reservationService.GetAllReservations(cancellationToken);
             return Ok(reservations);
         }
 
         // GET: api/Reservations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Reservation>> GetReservation(int id)
+        public async Task<ActionResult<Reservation>> GetReservation(int id, CancellationToken cancellationToken)
         {
-            var reservation = await _reservationService.GetReservationById(id);
+            var reservation = await _reservationService.GetReservationById(id, cancellationToken);
 
             if (reservation == null)
             {
@@ -43,7 +44,7 @@ namespace Adambnb.Controllers
 
         // PUT: api/Reservations/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReservation(int id, Reservation reservation)
+        public async Task<IActionResult> PutReservation(int id, Reservation reservation, CancellationToken cancellationToken)
         {
             if (id != reservation.Id)
             {
@@ -52,7 +53,7 @@ namespace Adambnb.Controllers
 
             try
             {
-                await _reservationService.UpdateReservation(reservation);
+                await _reservationService.UpdateReservation(reservation, cancellationToken);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -71,28 +72,29 @@ namespace Adambnb.Controllers
 
         // POST: api/Reservations
         [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
+        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation, CancellationToken cancellationToken)
         {
-            await _reservationService.AddReservation(reservation);
+            await _reservationService.AddReservation(reservation, cancellationToken);
             return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
         }
 
         // DELETE: api/Reservations/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReservation(int id)
+        public async Task<IActionResult> DeleteReservation(int id, CancellationToken cancellationToken)
         {
-            var reservation = await _reservationService.GetReservationById(id);
+            var reservation = await _reservationService.GetReservationById(id, cancellationToken);
             if (reservation == null)
             {
                 return NotFound();
             }
 
-            await _reservationService.DeleteReservation(id);
+            await _reservationService.DeleteReservation(id, cancellationToken);
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ReservationResponseDto>> CreateReservation([FromBody] ReservationRequestDto requestDto)
+        // POST: api/Reservations/CreateReservation
+        [HttpPost("CreateReservation")]
+        public async Task<ActionResult<ReservationResponseDto>> CreateReservation([FromBody] ReservationRequestDto requestDto, CancellationToken cancellationToken)
         {
             var reservationResponse = await _reservationService.CreateReservation(requestDto);
             if (reservationResponse == null)
@@ -101,6 +103,5 @@ namespace Adambnb.Controllers
             }
             return Ok(reservationResponse);
         }
-
     }
 }

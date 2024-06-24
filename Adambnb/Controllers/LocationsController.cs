@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Adambnb.Models;
@@ -26,9 +27,10 @@ namespace Adambnb.Controllers
 
         // GET: api/Locations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LocationV2DTO>>> GetLocations()
+        public async Task<ActionResult<IEnumerable<LocationV2DTO>>> GetLocations(CancellationToken cancellationToken)
         {
-            var locations = await _locationService.GetAllLocationsWithImages();
+            var locations = await _locationService.GetAllLocationsWithImages(cancellationToken);
+            /// I use the V2 DTO because the V1 DTO does load the images after recent updates
             var locationsDTO = _mapper.Map<List<LocationV2DTO>>(locations);
 
             return Ok(locationsDTO);
@@ -36,9 +38,9 @@ namespace Adambnb.Controllers
 
         // GET: api/Locations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Location>> GetLocation(int id)
+        public async Task<ActionResult<Location>> GetLocation(int id, CancellationToken cancellationToken)
         {
-            var location = await _locationService.GetLocationById(id);
+            var location = await _locationService.GetLocationById(id, cancellationToken);
 
             if (location == null)
             {
@@ -50,7 +52,7 @@ namespace Adambnb.Controllers
 
         // PUT: api/Locations/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLocation(int id, Location location)
+        public async Task<IActionResult> PutLocation(int id, Location location, CancellationToken cancellationToken)
         {
             if (id != location.Id)
             {
@@ -59,7 +61,7 @@ namespace Adambnb.Controllers
 
             try
             {
-                await _locationService.UpdateLocation(location);
+                await _locationService.UpdateLocation(location, cancellationToken);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -78,52 +80,52 @@ namespace Adambnb.Controllers
 
         // POST: api/Locations
         [HttpPost]
-        public async Task<ActionResult<Location>> PostLocation(Location location)
+        public async Task<ActionResult<Location>> PostLocation(Location location, CancellationToken cancellationToken)
         {
-            await _locationService.AddLocation(location);
+            await _locationService.AddLocation(location, cancellationToken);
             return CreatedAtAction("GetLocation", new { id = location.Id }, location);
         }
 
         // DELETE: api/Locations/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLocation(int id)
+        public async Task<IActionResult> DeleteLocation(int id, CancellationToken cancellationToken)
         {
-            var location = await _locationService.GetLocationById(id);
+            var location = await _locationService.GetLocationById(id, cancellationToken);
             if (location == null)
             {
                 return NotFound();
             }
 
-            await _locationService.DeleteLocation(id);
+            await _locationService.DeleteLocation(id, cancellationToken);
             return NoContent();
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<Location>>> GetAllLocations()
+        public async Task<ActionResult<IEnumerable<Location>>> GetAllLocations(CancellationToken cancellationToken)
         {
-            var locations = await _locationService.GetAllLocations();
+            var locations = await _locationService.GetAllLocations(cancellationToken);
             return Ok(locations);
         }
 
         [HttpPost("Search")]
-        public async Task<ActionResult<IEnumerable<LocationV2DTO>>> SearchLocations([FromBody] LocationSearchDto searchDto)
+        public async Task<ActionResult<IEnumerable<LocationV2DTO>>> SearchLocations([FromBody] LocationSearchDto searchDto, CancellationToken cancellationToken)
         {
-            var locations = await _locationService.SearchLocations(searchDto);
+            var locations = await _locationService.SearchLocations(searchDto, cancellationToken);
             var locationsDTO = _mapper.Map<List<LocationV2DTO>>(locations);
             return Ok(locationsDTO);
         }
 
         [HttpGet("GetMaxPrice")]
-        public async Task<ActionResult<int>> GetMaxPrice()
+        public async Task<ActionResult<int>> GetMaxPrice(CancellationToken cancellationToken)
         {
-            var maxPrice = await _locationService.GetMaxPrice();
+            var maxPrice = await _locationService.GetMaxPrice(cancellationToken);
             return Ok(new { Price = maxPrice });
         }
 
         [HttpGet("GetDetails/{id}")]
-        public async Task<ActionResult<LocationDetailsDto>> GetLocationDetails(int id)
+        public async Task<ActionResult<LocationDetailsDto>> GetLocationDetails(int id, CancellationToken cancellationToken)
         {
-            var locationDetails = await _locationService.GetLocationDetails(id);
+            var locationDetails = await _locationService.GetLocationDetails(id, cancellationToken);
             if (locationDetails == null)
             {
                 return NotFound();
@@ -132,9 +134,9 @@ namespace Adambnb.Controllers
         }
 
         [HttpGet("UnAvailableDates/{locationId}")]
-        public async Task<ActionResult<UnavailableDatesDto>> GetUnavailableDates(int locationId)
+        public async Task<ActionResult<UnavailableDatesDto>> GetUnavailableDates(int locationId, CancellationToken cancellationToken)
         {
-            var unavailableDates = await _locationService.GetUnavailableDates(locationId);
+            var unavailableDates = await _locationService.GetUnavailableDates(locationId, cancellationToken);
             if (unavailableDates == null)
             {
                 return NotFound();

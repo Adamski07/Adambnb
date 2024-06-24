@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Adambnb.Data;
@@ -16,14 +16,14 @@ namespace Adambnb.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Image>> GetAllImages()
+        public async Task<IEnumerable<Image>> GetAllImages(CancellationToken cancellationToken)
         {
-            return await _context.Images.ToListAsync();
+            return await _context.Images.ToListAsync(cancellationToken);
         }
 
-        public async Task<Image> GetImageById(int id)
+        public async Task<Image> GetImageById(int id, CancellationToken cancellationToken)
         {
-            return await _context.Images.FindAsync(id);
+            return await _context.Images.FindAsync(new object[] { id }, cancellationToken);
         }
 
         public async Task<bool> ImageExists(int id)
@@ -31,14 +31,14 @@ namespace Adambnb.Repositories
             return await _context.Images.AnyAsync(e => e.Id == id);
         }
 
-        public async Task<Image> CreateImage(Image image)
+        public async Task<Image> CreateImage(Image image, CancellationToken cancellationToken)
         {
             _context.Images.Add(image);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return image;
         }
 
-        public async Task<Image> UpdateImage(int id, Image image)
+        public async Task<Image> UpdateImage(int id, Image image, CancellationToken cancellationToken)
         {
             if (id != image.Id)
             {
@@ -49,7 +49,7 @@ namespace Adambnb.Repositories
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
                 return image;
             }
             catch (DbUpdateConcurrencyException)
@@ -65,16 +65,16 @@ namespace Adambnb.Repositories
             }
         }
 
-        public async Task<bool> DeleteImage(int id)
+        public async Task<bool> DeleteImage(int id, CancellationToken cancellationToken)
         {
-            var image = await _context.Images.FindAsync(id);
+            var image = await _context.Images.FindAsync(new object[] { id }, cancellationToken);
             if (image == null)
             {
                 return false;
             }
 
             _context.Images.Remove(image);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return true;
         }

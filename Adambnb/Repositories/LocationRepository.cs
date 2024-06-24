@@ -21,11 +21,14 @@ namespace Adambnb.Repositories
             return await _context.Locations.ToListAsync();
         }
 
-        public async Task<IEnumerable<Location>> GetAllLocationsWithImages()
+        public async Task<IEnumerable<Location>> GetAllLocations(CancellationToken cancellationToken)
         {
-            return await _context.Locations
-                .Include(l => l.Images)
-                .ToListAsync();
+            return await _context.Locations.ToListAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<Location>> GetAllLocationsWithImages(CancellationToken cancellationToken)
+        {
+            return await _context.Locations.Include(l => l.Images).ToListAsync(cancellationToken);
         }
 
         public async Task<Location> GetLocationById(int id)
