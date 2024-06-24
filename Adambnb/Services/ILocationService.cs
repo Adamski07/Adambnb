@@ -17,5 +17,7 @@ namespace Adambnb.Services
         Task<IEnumerable<Location>> SearchLocations(LocationSearchDto searchDto);
         Task<int> GetMaxPrice();
         Task<LocationDetailsDto> GetLocationDetails(int id);
+        Task<IEnumerable<DateTime>> GetUnavailableDates(int locationId);
+
     }
 }

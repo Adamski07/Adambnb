@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Adambnb.Models;
+using Adambnb.DTOs;
 
 namespace Adambnb.Services
 {
@@ -12,5 +13,7 @@ namespace Adambnb.Services
         Task UpdateReservation(Reservation reservation);
         Task DeleteReservation(int id);
         bool ReservationExists(int id);
+        Task<ReservationResponseDto> CreateReservation(ReservationRequestDto requestDto);
+
     }
 }

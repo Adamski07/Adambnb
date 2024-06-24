@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Adambnb.Models;
 using Adambnb.Services;
+using Adambnb.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Adambnb.Controllers
@@ -89,5 +90,17 @@ namespace Adambnb.Controllers
             await _reservationService.DeleteReservation(id);
             return NoContent();
         }
+
+        [HttpPost]
+        public async Task<ActionResult<ReservationResponseDto>> CreateReservation([FromBody] ReservationRequestDto requestDto)
+        {
+            var reservationResponse = await _reservationService.CreateReservation(requestDto);
+            if (reservationResponse == null)
+            {
+                return Conflict("The requested dates are no longer available.");
+            }
+            return Ok(reservationResponse);
+        }
+
     }
 }

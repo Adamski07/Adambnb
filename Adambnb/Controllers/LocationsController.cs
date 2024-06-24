@@ -130,5 +130,16 @@ namespace Adambnb.Controllers
             }
             return Ok(locationDetails);
         }
+
+        [HttpGet("UnAvailableDates/{locationId}")]
+        public async Task<ActionResult<UnavailableDatesDto>> GetUnavailableDates(int locationId)
+        {
+            var unavailableDates = await _locationService.GetUnavailableDates(locationId);
+            if (unavailableDates == null)
+            {
+                return NotFound();
+            }
+            return Ok(new UnavailableDatesDto { UnAvailableDates = unavailableDates });
+        }
     }
 }

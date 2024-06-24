@@ -91,6 +91,7 @@ namespace Adambnb.Services
 
             if (searchDto.Features.HasValue)
             {
+                var fetures = query.Where(l => l.Id == 1);
                 query = query.Where(l => ConvertFeaturesToInt(l.FeaturesList) == searchDto.Features.Value);
             }
             if (searchDto.Type.HasValue)
@@ -151,6 +152,24 @@ namespace Adambnb.Services
                     Avatar = location.LandLord.Avatar?.Url
                 }
             };
+        }
+
+        public async Task<IEnumerable<DateTime>> GetUnavailableDates(int locationId)
+        {
+            var reservations = await _context.Reservations
+                .Where(r => r.LocationId == locationId)
+                .Select(r => new { r.StartDate, r.EndDate })
+                .ToListAsync();
+
+            var unavailableDates = new List<DateTime>();
+            foreach (var reservation in reservations)
+            {
+                for (var date = reservation.StartDate; date <= reservation.EndDate; date = date.AddDays(1))
+                {
+                    unavailableDates.Add(date);
+                }
+            }
+            return unavailableDates;
         }
     }
 }
